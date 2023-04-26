@@ -1,0 +1,176 @@
+import java.io.*;
+import java.math.*;
+import java.security.*;
+import java.text.*;
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.regex.*;
+import java.util.stream.*;
+import static java.util.stream.Collectors.joining;
+import static java.util.stream.Collectors.toList;
+import java.util.Scanner;
+
+class Manufacturer{
+    private String name;
+    private boolean extendetGuaranty;
+
+    public Manufacturer(String name, boolean extendetGuaranty) {
+        this.name = name;
+        this.extendetGuaranty = extendetGuaranty;
+    }
+    public Manufacturer( boolean extendetGuaranty) {
+        this.extendetGuaranty = extendetGuaranty;
+    }
+
+    public boolean isExtendetGuaranty() {
+        return extendetGuaranty;
+    }
+
+    public void setExtendetGuaranty(boolean extendetGuaranty) {
+        this.extendetGuaranty = extendetGuaranty;
+    }
+}
+
+class ElectricDevice extends Manufacturer{
+    private int minGuaranty;
+
+
+
+    public ElectricDevice(boolean extendetGuaranty,int minGuaranty) {
+        super(extendetGuaranty);
+        setMinGuaranty(minGuaranty);
+    }
+
+    public int getMinGuaranty() {
+        return minGuaranty;
+    }
+
+    public void setMinGuaranty(int minGuaranty) {
+        if(minGuaranty<6){
+            this.minGuaranty=6;
+        }
+        else{
+            this.minGuaranty = minGuaranty;
+        }
+    }
+
+    public int warranty(){
+        if(isExtendetGuaranty()){
+            return minGuaranty + 12;
+        } else return minGuaranty;
+    }
+
+}
+
+class Cooker extends ElectricDevice{
+    private boolean gas;
+
+    public boolean isGas() {
+        return gas;
+    }
+
+    public void setGas(boolean gas) {
+        this.gas = gas;
+    }
+
+    public Cooker( boolean extendetGuaranty, int minGuaranty, boolean gas) {
+        super( extendetGuaranty, minGuaranty);
+        this.gas = gas;
+    }
+
+    public Cooker(ElectricDevice electricDevice, boolean gas) {
+        super( electricDevice.isExtendetGuaranty(),electricDevice.getMinGuaranty());
+        this.gas = gas;
+    }
+
+
+    public int warranty() {
+        int guaranty=getMinGuaranty();
+        if(isGas()){
+            guaranty+=12;
+        }
+        if(isExtendetGuaranty()){
+            guaranty+=12;
+        }
+        return guaranty;
+    }
+
+
+}
+
+class WashingMachine extends ElectricDevice{
+    private boolean drying;
+
+    public WashingMachine( boolean extendetGuaranty, int minGuaranty, boolean drying) {
+        super( extendetGuaranty, minGuaranty);
+        this.drying = drying;
+    }
+    public WashingMachine(ElectricDevice electricDevice, boolean drying) {
+        super( electricDevice.isExtendetGuaranty(),electricDevice.getMinGuaranty());
+        this.drying = drying;
+    }
+
+
+    public boolean isDrying() {
+        return drying;
+    }
+
+    public void setDrying(boolean drying) {
+        this.drying = drying;
+    }
+
+    public int warranty() {
+        int guaranty=getMinGuaranty();
+        if(isDrying()){
+            guaranty+=guaranty/2;
+        }
+        if(isExtendetGuaranty()){
+            guaranty+=12;
+        }
+        return guaranty;
+    }
+
+
+}
+
+
+public class Electic {
+
+    public static void main(String[] args) {
+
+        Scanner scanner = new Scanner(System.in);
+        
+        String manufacturer=scanner.nextLine();
+        boolean extendetGuaranty;
+        int bonusGuaranty = scanner.nextInt();
+        
+        if(bonusGuaranty>0){
+            extendetGuaranty = true;
+        }
+        else extendetGuaranty = false;
+
+        int minGuaranty = scanner.nextInt();
+        
+        boolean isGas;
+        int gas = scanner.nextInt();
+        if(gas>0){
+            isGas=true;
+        } else isGas=false;
+        
+        boolean isDryer;
+        int dryer=scanner.nextInt();
+        if(dryer > 0){
+            isDryer=true;
+        }
+        else isDryer=false;
+        
+        ElectricDevice electricDevice1= new ElectricDevice(extendetGuaranty , minGuaranty);
+        System.out.println(electricDevice1.warranty());
+        Cooker cooker1 = new Cooker (electricDevice1,isGas);
+        System.out.println(cooker1.warranty());
+        WashingMachine washingMachine1 = new WashingMachine(electricDevice1,isDryer);
+        System.out.println(washingMachine1.warranty());
+    }
+
+}
