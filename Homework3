@@ -1,0 +1,168 @@
+import java.io.*;
+import java.math.*;
+import java.security.*;
+import java.text.*;
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.regex.*;
+import java.util.stream.*;
+import static java.util.stream.Collectors.joining;
+import static java.util.stream.Collectors.toList;
+
+interface Deliverable {
+
+    public double deliveryPrice();
+}
+
+abstract class  DeliverableItem {
+    private boolean toAdress;
+    private static double priceToAdress;
+
+    public DeliverableItem(boolean toAdress) {
+        this.toAdress = toAdress;
+    }
+
+    public boolean isToAdress() {
+        return toAdress;
+    }
+
+    public void setToAdress(boolean toAdress) {
+        this.toAdress = toAdress;
+    }
+
+    public static double getPriceToAdress() {
+        return priceToAdress;
+    }
+
+    public static void setPriceToAdress(double priceToAdress) {
+       if(priceToAdress>0)DeliverableItem.priceToAdress = priceToAdress;
+       else DeliverableItem.priceToAdress = 1;
+    }
+
+    public abstract double deliveryPrice();
+}
+
+class Document extends DeliverableItem {
+    private double minPrice;
+
+    public Document(boolean toAdress, double minPrice) {
+        super(toAdress);
+        setMinPrice(minPrice);
+    }
+
+    public double getMinPrice() {
+        return minPrice;
+    }
+
+    public void setMinPrice(double minPrice) {
+        if(minPrice>0)this.minPrice = minPrice;
+        else this.minPrice = 1;
+    }
+
+    public double deliveryPrice(){
+        if(isToAdress()){
+            return minPrice + getPriceToAdress();
+        }
+        else return minPrice;
+    }
+}
+
+class Material {
+    private String name;
+    private boolean breakable;
+
+    public Material(String name, boolean breakable) {
+        this.name = name;
+        this.breakable = breakable;
+    }
+
+    public boolean isBreakable() {
+        return breakable;
+    }
+
+    public void setBreakable(boolean breakable) {
+        this.breakable = breakable;
+    }
+
+
+}
+
+class WeightedItem extends DeliverableItem {
+    private double kg;
+    private double priceKg;
+
+    private Material material1;
+
+    public WeightedItem(boolean toAdress, double kg, double priceKg, Material material1) {
+        super(toAdress);
+        setKg(kg);
+        setPriceKg(priceKg);
+        this.material1 = material1;
+    }
+
+    public double getKg() {
+        return kg;
+    }
+
+    public void setKg(double kg) {
+        if(kg>0)this.kg = kg;
+        else this.kg = 1;
+    }
+
+    public double getPriceKg() {
+        return priceKg;
+    }
+
+    public void setPriceKg(double priceKg) {
+        if(priceKg>0)this.priceKg = priceKg;
+        else this.priceKg = 1;
+    }
+
+    public double deliveryPrice(){
+        double tmp = kg * priceKg;
+
+        if(isToAdress())tmp += getPriceToAdress();
+        if(material1.isBreakable()) tmp = tmp * 1.01;
+
+        return tmp;
+    }
+}
+
+
+public class Soultion {
+    public static void main(String[] args)throws IOException {
+        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
+
+        String materialName = bufferedReader.readLine();
+
+        boolean isFragile = Integer.parseInt(bufferedReader.readLine().trim()) != 0;
+
+        boolean toClientsAddress = Integer.parseInt(bufferedReader.readLine().trim()) != 0;
+
+        double minPrice = Double.parseDouble(bufferedReader.readLine().trim());
+
+        double weight = Double.parseDouble(bufferedReader.readLine().trim());
+
+        double pricePerKg = Double.parseDouble(bufferedReader.readLine().trim());
+
+        double additionalPrice = Double.parseDouble(bufferedReader.readLine().trim());
+
+        DeliverableItem.setPriceToAdress(additionalPrice);
+
+        Material material1 = new Material(materialName, isFragile);
+
+        Document document1 = new Document(toClientsAddress, minPrice);
+
+        System.out.println(document1.deliveryPrice());
+
+        WeightedItem weightedItem1 = new WeightedItem(toClientsAddress, weight, pricePerKg, material1);
+
+        System.out.println(weightedItem1.deliveryPrice());
+
+
+
+
+        bufferedReader.close();
+    }
+}
