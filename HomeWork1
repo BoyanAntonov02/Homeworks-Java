@@ -1,0 +1,71 @@
+import java.io.*;
+import java.math.*;
+import java.security.*;
+import java.text.*;
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.regex.*;
+import java.util.stream.*;
+import static java.util.stream.Collectors.joining;
+import java.time.LocalDate;
+import java.time.Month;
+import java.time.temporal.ChronoUnit;
+import java.util.Scanner;
+
+class Manager {
+    private String name;
+    private LocalDate date1;
+    private LocalDate date2;
+    public Manager(String name) {
+        this.name = name;
+    }
+    public String getName() {
+        return name;
+    }
+    public LocalDate getDate1() {
+        return date1;
+    }
+    public void setC_date(LocalDate date2) {
+        this.date2 = date2;
+    }
+
+    public void setDate1(LocalDate date1) {
+        if(date1.isAfter(date2)){
+            date1 =LocalDate.of(2020, Month.JANUARY, 1);
+        }
+        else{
+            this.date1 = date1;
+        }
+    }
+
+    public long numberOfYearsInCompanyTill(LocalDate date2){
+        return ChronoUnit.YEARS.between(
+                date1,
+                date2
+        );
+    }
+
+
+}
+
+public class Solution {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        String name= scanner.nextLine();
+        int year= Integer.parseInt(scanner.nextLine());
+        int month= Integer.parseInt(scanner.nextLine());
+        int day= Integer.parseInt(scanner.nextLine());
+        int year2= Integer.parseInt(scanner.nextLine());
+        int month2= Integer.parseInt(scanner.nextLine());
+        int day2 = Integer.parseInt(scanner.nextLine());
+        Manager manager1 = new Manager(name);
+        LocalDate date1 = LocalDate.of(year,month,day);
+        LocalDate date2 = LocalDate.of(year2,month2, day2);
+        manager1.setC_date(date2);
+        manager1.setDate1(date1);
+        System.out.println(manager1.getDate1());
+        System.out.println(manager1.numberOfYearsInCompanyTill(date2));
+
+    }
+}
